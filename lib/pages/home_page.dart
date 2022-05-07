@@ -14,11 +14,11 @@ class HomePage extends StatefulWidget{
 
 class _HomePage extends State<HomePage>{
   User? user=FirebaseAuth.instance.currentUser;
-  Map<String,dynamic> data= Map();
-  List userdata=[];
+  var currentUser;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+  
   @override
   void reassemble() {
     super.reassemble();
@@ -26,26 +26,22 @@ class _HomePage extends State<HomePage>{
   }
 
   @override
- void setState(VoidCallback fn) {
-    // TODO: implement setState
-    super.setState(fn);
-     FirebaseFirestore.instance.collection('user')
-    .doc(user!.uid)
-    .get()
-    .then((value) => {
-      data=value.data() as Map<String,dynamic>
-     });
-     userdata.add(data);
-    setState(() { });
+ void initState(){
+    super.initState();
+    FirebaseFirestore.instance.collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((value) => currentUser=value.data()!['name']);
+    setState(() {});
   }
-
+  
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
-        title: const Text('Welcome'),
+        title: const Text('Welcome $currentUser'),
         actions: [
          ElevatedButton(
              onPressed: (){
